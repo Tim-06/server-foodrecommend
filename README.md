@@ -6,11 +6,11 @@
 使用者可以瀏覽食物清單。
 使用者可以新增和刪除食物。
 ## 技術
--bcrypt: "^5.1.1",
--cors: "^2.8.5",
--dotenv: "^16.4.5",
--express: "^4.19.2",
--jsonwebtoken: "^9.0.2",
-=mongoose: "^8.3.2"
+- bcrypt: "^5.1.1",
+- cors: "^2.8.5",
+- dotenv: "^16.4.5",
+- express: "^4.19.2",
+- jsonwebtoken: "^9.0.2",
+- mongoose: "^8.3.2"
 ## 網址
 https://tim-06.github.io/react/
