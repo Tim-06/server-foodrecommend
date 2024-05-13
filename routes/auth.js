@@ -87,7 +87,7 @@ router.post("/login", async (req, res) => {
         const token = jwt.sign(tokenObject, secretKey, { expiresIn: "3h" });
         return res.send({
           message: "成功登入",
-          token: "JWT " + token,
+          token: token,
           user: foundUser,
         });
       } else {

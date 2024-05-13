@@ -1,6 +1,25 @@
 const router = require("express").Router();
 const Food = require("../models").food;
 const customFood = require("../models").customFood;
+const jwt = require("jsonwebtoken");
+require("dotenv").config({ path: __dirname + "/../.env" });
+
+const secretKey = process.env.SECRET_KEY;
+
+// JWT 驗證
+function authenticateToken(req, res, next) {
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
+
+  if (token == null) return res.sendStatus(401); // 如果沒有 token，
+
+  jwt.verify(token, secretKey, (err, user) => {
+    if (err) return res.sendStatus(403); // 如果 token 不合法
+    req.user = user;
+    next();
+  });
+}
+
 router.use((req, res, next) => {
   next();
 });
@@ -31,20 +50,25 @@ router.get("/foodSearch/:foodType", async (req, res) => {
   }
 });
 
-router.get("/foodSearch/user/:userEmail", async (req, res) => {
-  // 從個人資料庫取出食物
-  try {
-    let email = req.params.userEmail;
-    let foodList = await customFood.find({ userEmail: email });
+router.get(
+  "/foodSearch/user/:userEmail",
+  authenticateToken,
+  async (req, res) => {
+    // 從個人資料庫取出食物
+    try {
+      let email = req.params.userEmail;
+      let foodList = await customFood.find({ userEmail: email });
 
-    return res.send(foodList);
-  } catch (e) {
-    console.log("存取資料庫失敗" + e.message);
-    return res.status(500).send("存取food資料庫失敗");
+      return res.send(foodList);
+    } catch (e) {
+      console.log("存取資料庫失敗" + e.message);
+      return res.status(500).send("存取food資料庫失敗");
+    }
   }
-});
+);
+
 //刪除食物
-router.patch("/foodDelete", async (req, res) => {
+router.patch("/foodDelete", authenticateToken, async (req, res) => {
   const email = req.query.email;
   const foodName = req.query.foodName; // 從查詢參數中獲取要刪除的食物名稱
 
@@ -66,7 +90,7 @@ router.patch("/foodDelete", async (req, res) => {
   }
 });
 //新增食物
-router.patch("/foodInsert", async (req, res) => {
+router.patch("/foodInsert", authenticateToken, async (req, res) => {
   const email = req.query.email;
   const foodName = req.query.foodName;
   const foodType = req.query.foodType;
