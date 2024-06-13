@@ -13,16 +13,11 @@ function authenticateToken(req, res, next) {
 
   if (token == null) return res.sendStatus(401); // 如果沒有 token，
 
-  jwt.verify(token, secretKey, (err, user) => {
+  jwt.verify(token, secretKey, (err, decoded) => {
     if (err) return res.sendStatus(403); // 如果 token 不合法
-    req.user = user;
     next();
   });
 }
-
-router.use((req, res, next) => {
-  next();
-});
 
 router.get("/foodSearch", async (req, res) => {
   // 從資料庫中取出所有食物

@@ -65,13 +65,13 @@ router.post("/register", async (req, res) => {
 
 router.post("/login", async (req, res) => {
   // 確認信箱是否被註冊過
-  const foundUser = await User.findOne({ email: req.body.email }).exec();
+  const foundUser = await User.findOne({ email: req.body.email });
   if (!foundUser) {
     return res.status(401).send("無法找到使用者。請確認信箱是否正確。");
   }
 
   // 確認密碼是否正確
-  const hashedPasswordFromDatabase = foundUser.password; // 從數據庫中獲取的加密後的密碼
+  const hashedPasswordFromDatabase = foundUser.password; // 從資料庫中獲取的加密後的密碼
 
   bcrypt.compare(
     req.body.password,
